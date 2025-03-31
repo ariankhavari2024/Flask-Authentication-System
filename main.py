@@ -5,7 +5,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 
-app = Flask(__name__)  #our flask is defined
+app = Flask(__name__)  # Our flask is defined
 app.config["SECRET_KEY"] = "random-secret-key-here"
 
 class Base(DeclarativeBase): 
@@ -20,10 +20,10 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id): 
-    return db.get_or_404(User, user_id) # we are using UserMixin, so we should be fine with pulling the id
+    return db.get_or_404(User, user_id) # We are using UserMixin, so we should be fine with pulling the id
 
 class User(UserMixin, db.Model): 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True) #we set the primary key to true over here in this case
+    id: Mapped[int] = mapped_column(Integer, primary_key=True) # We set the primary key to true over here in this case
     title: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(1000))
@@ -42,7 +42,7 @@ def login():
         password = request.form.get("password")
         user = db.session.execute(db.select(User).where(User.title == email)).scalar()
         if check_password_hash(user.password, password): 
-            login_user(user) #the user is logged in and now has privilages, once the server runs
+            login_user(user) # The user is logged in and now has privilages, once the server runs
             return redirect(url_for("secrets"))
     return render_template("login.html", logged_in=current_user.is_authenticated)
 
@@ -53,7 +53,7 @@ def register():
         new_user = User(
             name = request.form.get("name"), 
             title = request.form.get("email"), 
-            password = generate_password_hash(request.form.get("password"), method="pbkdf2:sha256", salt_length=8) #this adds a salt and encrypts with sha256
+            password = generate_password_hash(request.form.get("password"), method="pbkdf2:sha256", salt_length=8) # This adds a salt and encrypts with sha256
         )
         db.session.add(new_user)
         db.session.commit()
@@ -71,7 +71,7 @@ def secrets():
 @app.route("/download")
 @login_required
 def download(): 
-    return send_from_directory('static', path="files/cheat_sheet.pdf") # this sends the user to the donwloaded pdf, not downloading, but raking them there
+    return send_from_directory('static', path="files/cheat_sheet.pdf") # This sends the user to the donwloaded pdf, not downloading, but taking them there
 
 @app.route("/logout")
 @login_required
